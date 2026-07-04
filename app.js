@@ -1,4 +1,34 @@
 // =========================================================================
+// REPARAT: INTRARE AUTOMATĂ ÎN LOBBY LA FINAL DE MECI (SUB 50 LINII)
+// =========================================================================
+function intoarceInLobby() {
+    // Resetăm variabilele de sesiune ca să putem căuta un meci nou
+    myRole = null; 
+    currentRoomId = null;
+
+    if (document.getElementById('find-game-btn')) { 
+        document.getElementById('find-game-btn').disabled = false; 
+        document.getElementById('find-game-btn').innerText = "Find Game"; 
+    }
+    if (document.getElementById('lobby-status')) {
+        document.getElementById('lobby-status').innerText = "Meciul s-a terminat. Selectează pachetul și caută un nou adversar!";
+    }
+    
+    // Ascundem elementele de chat
+    if (document.getElementById('chat-hamburger')) document.getElementById('chat-hamburger').style.display = 'none';
+    if (document.getElementById('chat-sidebar')) { 
+        document.getElementById('chat-sidebar').classList.remove('open'); 
+        document.getElementById('chat-sidebar').style.display = 'none'; 
+    }
+    
+    // Comutăm ecranele vizuale (OBLIGATORIU)
+    if (document.getElementById('game-container')) document.getElementById('game-container').style.display = 'none';
+    if (document.getElementById('lobby-container')) document.getElementById('lobby-container').style.display = 'flex';
+}
+
+
+
+// =========================================================================
 // BUCATA 1: INITIALIZARE NETWORK, SESIUNI SI AUTENTIFICARE
 // =========================================================================
 const socket = io(); 
