@@ -353,7 +353,10 @@ socket.on('receiveChatMessage', (d) => {
     let s = document.getElementById('chat-sidebar'); if (d.username !== myUsername && s && !s.classList.contains('open')) { if(document.getElementById('chat-badge')) document.getElementById('chat-badge').style.display = 'inline-block'; }
 });
 if (document.getElementById('go-lobby-btn')) { document.getElementById('go-lobby-btn').onclick = () => { if (confirm("Abandonezi?")) { socket.emit('playerSurrender', { roomId: currentRoomId, role: myRole }); } }; }
-socket.on('matchOverBySurrender', () => { intoarceInLobby(); });
+socket.on('matchOverBySurrender', (data) => {
+    alert("Meciul s-a încheiat prin abandonul sau deconectarea unui jucător!");
+    intoarceInLobby(); 
+});
 socket.on('updateLeaderboard', (list) => {
     const b = document.getElementById('leaderboard-body'); if (!b) return; b.innerHTML = ''; if (list.length === 0) { b.innerHTML = '<tr><td colspan="3">Niciun jucator.</td></tr>'; return; }
     list.forEach((p, idx) => {
