@@ -1,0 +1,42 @@
+[
+  {
+    "username": "bodea",
+    "password": "123123"
+  },
+  {
+    "username": "bodea2",
+    "password": "123123",
+    "wins": 1
+  },
+  {
+    "username": "bodea1",
+    "password": "123113"
+  },
+  {
+    "username": "bodea3",
+    "password": "123123",
+    "wins": 1
+  },
+  {
+    "username": "Bogdan3",
+    "password": "123123"
+  },
+  {
+    "username": "Bogdan4",
+    "password": "123123"
+  },
+  {
+    "username": "asav14",
+    "password": "lovebodea"
+  },
+  {
+    "username": "Bodea4",
+    "password": "123123",
+    "wins": 3
+  },
+  {
+    "username": "bodea5",
+    "password": "123123",
+    "wins": 0
+  }
+]

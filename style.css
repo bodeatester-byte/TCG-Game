@@ -1,0 +1,440 @@
+/* ==========================================
+   STILURI GLOBALE ȘI RESETARE
+   ========================================== */
+* {
+    box-sizing: border-box; /* Împiedică elementele să iasă din ecran din cauza padding-ului */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a;
+    color: white;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden; /* Blochează mișcarea stânga-dreapta a întregii pagini */
+}
+
+/* ==========================================
+   CONTAINERE PENTRU ECRANE (LOGIN & LOBBY)
+   ========================================== */
+#auth-container, #lobby-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #1a1a1a;
+    z-index: 10;
+    padding: 15px;
+    overflow-y: auto; /* Permite derularea în jos dacă telefonul e ținut pe orizontală */
+}
+
+/* Caseta de Login / Register */
+#auth-box {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+    text-align: center;
+    width: 100%;
+    max-width: 340px; /* Dimensiune maximă pe PC, se micșorează automat pe mobil */
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px; /* Butoane mai mari, mai ușor de apăsat pe telefon */
+    border-radius: 5px;
+    border: none;
+    background-color: #444;
+    color: white;
+    font-size: 16px; /* Împiedică iOS/Safari să facă auto-zoom la click pe input */
+}
+
+#auth-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#auth-actions button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#login-btn { background-color: white; color: black; }
+#register-btn { background-color: #2ed573; color: white; }
+
+#auth-message {
+    font-size: 13px;
+    margin-top: 15px;
+    color: #ff4757;
+}
+
+#forgot-link {
+    color: #54a0ff;
+    font-size: 13px;
+    text-decoration: none;
+    display: block;
+    margin-top: 12px;
+}
+
+/* ==========================================
+   ECRANUL DE LOBBY (DECK SELECTOR)
+   ========================================== */
+#lobby-box {
+    background-color: #2a2a2a;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.5);
+}
+
+#deck-selector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap; /* Forțează pachetele să treacă pe rânduri noi pe ecranul mic al telefonului */
+}
+
+.deck-option {
+    cursor: pointer;
+}
+
+.deck-option input {
+    display: none;
+}
+
+.deck-card {
+    width: 130px;
+    height: 150px;
+    border: 3px solid #444;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    transition: transform 0.2s, border-color 0.2s;
+    color: black;
+    text-align: center;
+    padding: 10px;
+}
+.dragon-bg { 
+    /* REPARAT: Folosim cale relativă web, valabilă și pentru PC și pentru telefon */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('imagini/dragon.png');
+    
+    background-size: cover;
+    background-position: center;
+    color: white !important; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8); 
+}
+
+
+.golem-bg {     /* REPARAT: Folosim cale relativă web, valabilă și pentru PC și pentru telefon */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('imagini/Golem.png');
+    
+    background-size: cover;
+    background-position: center;
+    color: white !important; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8); 
+}
+.undead-bg  {     /* REPARAT: Folosim cale relativă web, valabilă și pentru PC și pentru telefon */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('imagini/undead.png');
+    
+    background-size: cover;
+    background-position: center;
+    color: white !important; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);  }
+.spirit-bg {     /* REPARAT: Folosim cale relativă web, valabilă și pentru PC și pentru telefon */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('imagini/spirit.png');
+    
+    background-size: cover;
+    background-position: center;
+    color: white !important; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);  }
+.mecha-bg {     /* REPARAT: Folosim cale relativă web, valabilă și pentru PC și pentru telefon */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('imagini/mecha.png');
+    
+    background-size: cover;
+    background-position: center;
+    color: white !important; 
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);  }
+
+.deck-option input:checked + .deck-card {
+    border-color: #f1c40f;
+    transform: scale(1.03);
+    box-shadow: 0 0 8px #f1c40f;
+}
+
+#find-game-btn {
+    background-color: #ff9f43;
+    color: white;
+    font-size: 18px;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+#lobby-status {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #ff9f43;
+}
+
+/* ==========================================
+   STILURI PENTRU INTERFAȚA JOCULUI (COMPLET FLUID)
+   ========================================== */
+#game-container {
+    width: 100%; /* Ocupă acum 100% din ecran pe PC și laptop */
+    max-width: 100%; /* Elimină limitarea care strângea jocul pe mijloc */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.player-section {
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 100%; /* Secțiunea jucătorului se întinde complet */
+}
+
+.player-section h2 {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+/* Zonele de mână și teren ocupă tot ecranul de la stânga la dreapta */
+.hand, .field {
+    display: flex;
+    gap: 12px;
+    min-height: 120px;
+    background-color: #3a3a3a;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 5px;
+    justify-content: center; /* Aliniază cărțile frumos pe centru */
+    align-items: center;
+    width: 100%; /* Fluid pe lungime */
+    box-sizing: border-box;
+    overflow-x: auto; /* Activează scroll-ul automat doar dacă ai mult prea multe cărți */
+}
+
+/* MODIFICAT: Cărți mari, lăsate transparente pentru a afișa imaginile din JS */
+.card, .deck-slot {
+    width: 140px; 
+    height: 195px;
+    flex-shrink: 0;
+    border: 3px solid #fff;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Slotul de Deck și Cimitir păstrează un fundal gri fix (ele nu au imagini de monștri) */
+.deck-slot {
+    background-color: #57606f;
+    border: 3px dashed #fff;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#control-panel {
+    text-align: center;
+    background: #333;
+    padding: 15px;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* ==========================================
+   CHAT SIDEBAR RESPONSIV
+   ========================================== */
+#chat-hamburger {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 99;
+    background-color: #2e86de;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#chat-sidebar {
+    position: fixed;
+    top: 0;
+    right: -100vw; /* Ascuns complet în afara ecranului în procente */
+    width: 100%;
+    max-width: 300px; /* Pe mobil ocupă lățimea optimă, pe PC rămâne fix */
+    height: 100vh;
+    background-color: #222;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.5);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+}
+
+#chat-sidebar.open {
+    right: 0;
+}
+
+#chat-header {
+    background-color: #2e86de;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#chat-header h3 { margin: 0; color: white; font-size: 16px; }
+
+#chat-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#chat-messages {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chat-msg {
+    background-color: #333;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    max-width: 85%;
+    word-break: break-word;
+}
+
+.chat-msg.me {
+    background-color: #2e86de;
+    align-self: flex-end;
+}
+
+#chat-input-area {
+    padding: 12px;
+    background-color: #1a1a1a;
+    display: flex;
+    gap: 8px;
+}
+
+#chat-message-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    background-color: #333;
+    color: white;
+    font-size: 14px;
+}
+
+#chat-send-btn {
+    background-color: #2ed573;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ==========================================
+   MEDIA QUERIES (OPTIMIZĂRI PENTRU MOBIL ECOANE MICI)
+   ========================================== */
+@media (max-width: 480px) {
+    /* Aliniem elementele de la mână la stânga pentru ca scroll-ul lateral să aibă sens */
+    .hand {
+        justify-content: flex-start;
+    }
+    
+    .card, .deck-slot {
+        width: 65px; /* Cărți ușor mai mici ca să încapă mai multe pe ecranul îngust al telefonului */
+        height: 92px;
+        font-size: 9px;
+    }
+
+    .deck-card {
+        width: 100px; /* Casetele din lobby se micșorează ca să încapă câte 2-3 pe rând pe mobil */
+        height: 120px;
+        font-size: 11px;
+    }
+    
+    #lobby-box {
+        padding: 15px;
+    }
+}
+/* Forțăm ecranele să se mărească vizual doar pe telefoane (maximum 480px lățime) */
+@media (max-width: 480px) {
+    #auth-box {
+        max-width: 100%;
+        transform: scale(1.1); /* Mărește caseta de login cu 10% pe mobil */
+        margin: auto;
+    }
+    
+    #lobby-box {
+        width: 100%;
+        padding: 15px;
+        transform: scale(1.05); /* Mărește ecranul de lobby cu 5% pe mobil */
+    }
+
+    /* Facem cărțile de pe masă și din mână puțin mai înalte ca să fie mai ușor de citit textul pe telefon */
+    .card, .deck-slot {
+        width: 75px !important;
+        height: 105px !important;
+        font-size: 10px !important;
+    }
+}
