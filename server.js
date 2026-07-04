@@ -88,11 +88,26 @@ function pornesteMeciul(p1, p2) {
 }
 
 io.on('connection', (socket) => {
+    // ==========================================
+    // REPARAT: COPIAZĂ ACEST BLOC ÎN LOCUL CELUI VECHI
+    // ==========================================
     trimiteLeaderboard(socket);
-    socket.on('registerUser', (data) => {
-        let u = loadUsers(); if (u.find(x => x.username.toLowerCase() === data.username.toLowerCase())) { socket.emit('authResponse', { success: false, message: "Existent!" }); return; }
-        u.push({ username: data.username, password: data.password, wins: 0 }); saveUsers(u); socket.emit('authResponse', { success: true, message: "Cont creat!" });
+    socket.on('registerUser', (data) => { 
+        let u = loadUsers(); 
+        
+        if (u.find(x => x.username.toLowerCase() === data.username.toLowerCase())) { 
+            socket.emit('authResponse', { success: false, message: "Existent!" }); 
+            return; 
+        }
+        
+        u.push({ username: data.username, password: data.password, wins: 0 }); 
+        saveUsers(u); 
+        socket.emit('authResponse', { success: true, message: "Cont creat!" });
+        
+        // REPARAT: Trimite noul cont în tabelul Top 10 pentru toată lumea de pe internet pe loc!
+        trimiteLeaderboard(); 
     });
+
     socket.on('loginUser', (data) => {
         let u = loadUsers(); let f = u.find(x => x.username.toLowerCase() === data.username.toLowerCase() && x.password === data.password);
         if (!f) { socket.emit('authResponse', { success: false, message: "Gresit!" }); return; }
