@@ -56,7 +56,7 @@ function pornesteMeciul(p1, p2) {
     io.sockets.sockets.get(p1.socketId)?.join(rId); io.sockets.sockets.get(p2.socketId)?.join(rId);
     io.to(p1.socketId).emit('matchReady', { role: 1, roomId: rId }); io.to(p2.socketId).emit('matchReady', { role: 2, roomId: rId }); io.to(rId).emit('updateGameState', s);
 }
-
+app.get('/favicon.ico', (req, res) => res.status(204).end());
 io.on('connection', (socket) => {
     trimiteLeaderboard(socket);
     socket.on('registerUser', (data) => {
