@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplayer TCG Arena</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+    <!-- 1. ECRAN AUTENTIFICARE -->
+    <div id="auth-container" class="auth-box">
+        <h2>⚔️ TCG ARENA LOGIN</h2>
+        <input type="text" id="username-input" placeholder="Username..." maxlength="15">
+        <input type="password" id="password-input" placeholder="Parolă...">
+        <div class="auth-buttons">
+            <button id="login-btn">Log In</button>
+            <button id="register-btn" class="btn-secondary">Înregistrare</button>
+        </div>
+        <p id="auth-message" style="color: #ff4757; font-weight: bold; margin-top: 10px;"></p>
+    </div>
+
+    <!-- 2. ECRAN LOBBY RESPONSIV -->
+    <div id="lobby-container" class="lobby-box" style="display: none;">
+        <div class="lobby-header-wrapper" style="margin-bottom: 20px;">
+            <h2 style="margin: 0; font-size: 22px;">Bun venit, <span id="lobby-welcome-user">Jucător</span>! 👋</h2>
+            <button id="logout-btn" style="background-color: #ff4757; font-size: 11px; padding: 4px 10px; margin-top: 8px; border-radius: 4px;">🚪 Log Out</button>
+        </div>
+        <p id="lobby-status" style="color: #a4b0be; font-size: 13px;">Selectează un pachet și caută un adversar:</p>
+        
+                <!-- REPARAT: COPIAZĂ ACEST SECTOR RESPONSIV ÎN index.html (SUB 50 DE LINII) -->
+        <div class="deck-selector" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 25px 0; width: 100%;">
+            
+            <label class="deck-option" style="cursor: pointer;">
+                <input type="radio" name="deck-choice" value="dragon" checked style="display: none;">
+                <div class="deck-card deck-dragon-bg">
+                    <span>DRAGONI</span>
+                </div>
+            </label>
+
+            <label class="deck-option" style="cursor: pointer;">
+                <input type="radio" name="deck-choice" value="golem" style="display: none;">
+                <div class="deck-card deck-golem-bg">
+                    <span>GOLEMI</span>
+                </div>
+            </label>
+
+            <label class="deck-option" style="cursor: pointer;">
+                <input type="radio" name="deck-choice" value="undead" style="display: none;">
+                <div class="deck-card deck-undead-bg">
+                    <span>UNDEAD</span>
+                </div>
+            </label>
+
+            <label class="deck-option" style="cursor: pointer;">
+                <input type="radio" name="deck-choice" value="spirit" style="display: none;">
+                <div class="deck-card deck-spirit-bg">
+                    <span>SPIRITE</span>
+                </div>
+            </label>
+
+            <label class="deck-option" style="cursor: pointer;">
+                <input type="radio" name="deck-choice" value="mecha" style="display: none;">
+                <div class="deck-card deck-mecha-bg">
+                    <span>MECHA</span>
+                </div>
+            </label>
+
+        </div>
+
+
+        <div id="leaderboard-section">
+            <h3>🏆 TOP 10 CÂȘTIGĂTORI</h3>
+            <table>
+                <thead>
+                    <tr><th style="width: 20%;">Loc</th><th style="width: 50%;">Utilizator</th><th style="width: 30%; text-align: right;">Victorii</th></tr>
+                </thead>
+                <tbody id="leaderboard-body">
+                    <tr><td colspan="3" style="text-align:center; color:#666;">Se încarcă...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <button id="find-game-btn">Find Game</button>
+    </div>
+
+    <!-- 3. ARENA DE JOC -->
+    <div id="game-container" style="display: none;">
+        <div class="player-section top-section">
+            <div class="player-info-bar">
+                <span class="username-tag">👑 <span id="p2-username">Inamic</span></span>
+                <span class="lp-tag">❤️ LP: <span id="p2-lp">8000</span></span>
+            </div>
+            <div class="game-row">
+                <div id="p2-deck" class="deck-slot">DECK</div>
+                <div id="p2-hand" class="hand-container"></div>
+                <div id="p2-graveyard" class="deck-slot graveyard-slot">GY</div>
+            </div>
+            <div class="field-wrapper"><div id="p2-field" class="field-container"></div></div>
+        </div>
+
+        <div class="arena-center-bar">
+            <div id="game-message">Pregătire teren de joc...</div>
+            <div class="center-buttons">
+                <button id="mulligan-btn" style="display: none;">🔄 Mulligan</button>
+                <button id="end-turn-btn">⏳ Termină Tura</button>
+                <button id="go-lobby-btn" class="btn-danger">🏳️ Abandon</button>
+            </div>
+        </div>
+
+        <div class="player-section bottom-section">
+            <div class="field-wrapper"><div id="p1-field" class="field-container"></div></div>
+            <div class="game-row">
+                <div id="p1-deck" class="deck-slot">DECK</div>
+                <div id="p1-hand" class="hand-container"></div>
+                <div id="p1-graveyard" class="deck-slot graveyard-slot">GY</div>
+            </div>
+            <div class="player-info-bar">
+                <span class="username-tag">🛡️ <span id="p1-username">Tu</span></span>
+                <span class="lp-tag">❤️ LP: <span id="p1-lp">8000</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT PE STÂNGA ȘI ELEMENT BANNER ANIMAȚIE -->
+    <button id="chat-hamburger">☰ Chat <span id="chat-badge"></span></button>
+    <div id="chat-sidebar" class="sidebar">
+        <div class="sidebar-header"><h3>💬 Chat</h3><button id="chat-close">✖</button></div>
+        <div id="chat-messages" class="chat-body"></div>
+        <div class="sidebar-footer">
+            <input type="text" id="chat-message-input" placeholder="Scrie ceva..." maxlength="60">
+            <button id="chat-send-btn">Trimite</button>
+        </div>
+    </div>
+
+    <div id="turn-banner">TURA TA</div>
+    <script src="app.js"></script>
+</body>
+</html>
