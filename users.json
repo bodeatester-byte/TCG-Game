@@ -6,7 +6,7 @@
   {
     "username": "bodea2",
     "password": "123123",
-    "wins": 33
+    "wins": 34
   },
   {
     "username": "bodea1",
@@ -15,7 +15,7 @@
   {
     "username": "bodea3",
     "password": "123123",
-    "wins": 44
+    "wins": 45
   },
   {
     "username": "Bogdan3",
@@ -53,5 +53,26 @@
     "username": "bodea333",
     "password": "123123",
     "wins": 0
+  },
+  {
+    "username": "francoi",
+    "password": "123123",
+    "wins": 0,
+    "losses": 0,
+    "coins": 100
+  },
+  {
+    "username": "francoi2",
+    "password": "123123",
+    "wins": 0,
+    "losses": 0,
+    "coins": 100
+  },
+  {
+    "username": "francoi3",
+    "password": "123123",
+    "wins": 0,
+    "losses": 0,
+    "coins": 100
   }
 ]
