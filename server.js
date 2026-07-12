@@ -1,7 +1,8 @@
 const express = require('express'); const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, { cors: { origin: "*" } });
-const path = require('path'); const fs = require('fs');
+const path = require('path'); 
+const fs = require('fs');
 app.use(express.static(path.join(__dirname, '/')));
 const DB_FILE = path.join(__dirname, 'users.json');
 
@@ -83,35 +84,148 @@ function pornesteMeciul(p1, p2) {
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 io.on('connection', (socket) => {
     trimiteLeaderboard(socket);
+
     socket.on('registerUser', (data) => {
-        let u = loadUsers(); if (u.find(x => x.username.toLowerCase() === data.username.toLowerCase())) { socket.emit('authResponse', { success: false, message: "Existent!" }); return; }
-        u.push({ username: data.username, password: data.password, wins: 0 }); saveUsers(u); socket.emit('authResponse', { success: true, message: "Cont creat!" }); trimiteLeaderboard();
+        // 1. Validare date primite
+        if (!data || !data.username || !data.password) {
+            socket.emit('authResponse', { success: false, message: "Date incomplete!" });
+            return;
+        }
+
+        let u = loadUsers(); 
+        
+        // 2. Verificare dacă utilizatorul există deja (case-insensitive)
+        let userExists = u.find(x => x.username.toLowerCase() === data.username.toLowerCase());
+        if (userExists) { 
+            socket.emit('authResponse', { success: false, message: "Existent!" }); 
+            return; 
+        }
+        
+        // 3. Creare structură completă și curată pentru noul cont
+        const newUser = { 
+            username: data.username.trim(), 
+            password: data.password, 
+            wins: 0,
+            losses: 0, // Inițializări folositoare pentru joc
+            
+        };
+        
+        // 4. Salvare în fișierul users.json
+        u.push(newUser); 
+        saveUsers(u); 
+        
+        // 5. Răspuns către client și actualizare leaderboard globală (folosind io)
+        socket.emit('authResponse', { success: true, message: "Cont creat!" }); 
+        
+        // REPARAT: Trimitem leaderboard-ul actualizat către toată lumea din joc
+        if (typeof trimiteLeaderboard === 'function') {
+            trimiteLeaderboard(io); // Schimbat din trimiteLeaderboard() simplu pentru a nu bloca serverul
+        }
     });
+
     socket.on('loginUser', (data) => {
-        let u = loadUsers(); let f = u.find(x => x.username.toLowerCase() === data.username.toLowerCase() && x.password === data.password); if (!f) { socket.emit('authResponse', { success: false, message: "Gresit!" }); return; }
-        let rId = null, rle = null; for (let id in activeRooms) { if (activeRooms[id].p1User === f.username) { rId = id; rle = 1; break; } if (activeRooms[id].p2User === f.username) { rId = id; rle = 2; break; } }
-        if (rId) { if (disconnectTimeouts[f.username]) { clearTimeout(disconnectTimeouts[f.username]); delete disconnectTimeouts[f.username]; } if (rle === 1) activeRooms[rId].p1SocketId = socket.id; else activeRooms[rId].p2SocketId = socket.id; socket.join(rId); }
+        if (!data || !data.username || !data.password) {
+            socket.emit('authResponse', { success: false, message: "Date incomplete!" });
+            return;
+        }
+        let u = loadUsers(); 
+        let f = u.find(x => x.username.toLowerCase() === data.username.toLowerCase() && x.password === data.password); 
+        if (!f) { socket.emit('authResponse', { success: false, message: "Gresit!" }); return; }
+        
+        let rId = null, rle = null; 
+        for (let id in activeRooms) { 
+            if (activeRooms[id].p1User === f.username) { rId = id; rle = 1; break; } 
+            if (activeRooms[id].p2User === f.username) { rId = id; rle = 2; break; } 
+        }
+        if (rId) { 
+            if (disconnectTimeouts[f.username]) { clearTimeout(disconnectTimeouts[f.username]); delete disconnectTimeouts[f.username]; } 
+            if (rle === 1) activeRooms[rId].p1SocketId = socket.id; else activeRooms[rId].p2SocketId = socket.id; 
+            socket.join(rId); 
+        }
         socket.emit('authResponse', { success: true, username: f.username, inGame: !!rId, role: rle, roomId: rId });
     });
+
     socket.on('checkActiveSession', (user) => {
-        let rId = null, rle = null; for (let id in activeRooms) { if (activeRooms[id].p1User === user) { rId = id; rle = 1; break; } if (activeRooms[id].p2User === user) { rId = id; rle = 2; break; } }
-        if (rId) { if (disconnectTimeouts[user]) { clearTimeout(disconnectTimeouts[user]); delete disconnectTimeouts[user]; } if (rle === 1) activeRooms[rId].p1SocketId = socket.id; else activeRooms[rId].p2SocketId = socket.id; socket.join(rId); socket.emit('sessionRestored', { username: user, inGame: true, role: rle, roomId: rId }); socket.emit('updateGameState', activeRooms[rId].gameState); }
-        else { socket.emit('sessionRestored', { username: user, inGame: false, role: null, roomId: null }); }
+        if (!user) return;
+        let rId = null, rle = null; 
+        for (let id in activeRooms) { 
+            if (activeRooms[id].p1User === user) { rId = id; rle = 1; break; } 
+            if (activeRooms[id].p2User === user) { rId = id; rle = 2; break; } 
+        }
+        if (rId) { 
+            if (disconnectTimeouts[user]) { clearTimeout(disconnectTimeouts[user]); delete disconnectTimeouts[user]; } 
+            if (rle === 1) activeRooms[rId].p1SocketId = socket.id; else activeRooms[rId].p2SocketId = socket.id; 
+            socket.join(rId); 
+            socket.emit('sessionRestored', { username: user, inGame: true, role: rle, roomId: rId }); 
+            socket.emit('updateGameState', activeRooms[rId].gameState); 
+        } else { 
+            socket.emit('sessionRestored', { username: user, inGame: false, role: null, roomId: null }); 
+        }
     });
-    socket.on('playerAction', (data) => { let r = activeRooms[data.roomId]; if (r) { r.gameState = data.state; io.to(data.roomId).emit('updateGameState', r.gameState); } });
-    socket.on('sendChatMessage', (data) => { if (data.roomId) io.to(data.roomId).emit('receiveChatMessage', { username: data.username, text: data.text }); });
-    socket.on('findGame', (data) => { matchmakingQueue = matchmakingQueue.filter(p => p.username !== data.username); matchmakingQueue.push({ socketId: socket.id, username: data.username, deck: data.deck }); if (matchmakingQueue.length >= 2) pornesteMeciul(matchmakingQueue.shift(), matchmakingQueue.shift()); });
-    socket.on('cancelFindGame', (data) => { matchmakingQueue = matchmakingQueue.filter(p => p.username !== data.username); });
-    socket.on('playerSurrender', (data) => { let r = activeRooms[data.roomId]; if (r) { io.to(data.roomId).emit('matchOverBySurrender', { abandonedRole: data.role }); adaugaVictorie(data.role === 1 ? r.p2User : r.p1User); delete activeRooms[data.roomId]; } });
-    socket.on('matchFinishedNormal', (data) => { let r = activeRooms[data.roomId]; if (r) { io.to(data.roomId).emit('matchOverByPoints', { winnerUsername: data.winnerUsername, reason: data.reason }); adaugaVictorie(data.winnerUsername); delete activeRooms[data.roomId]; } });
+
+    socket.on('playerAction', (data) => { 
+        if (!data || !data.roomId) return;
+        let r = activeRooms[data.roomId]; 
+        if (r) { r.gameState = data.state; io.to(data.roomId).emit('updateGameState', r.gameState); } 
+    });
+
+    socket.on('sendChatMessage', (data) => { 
+        if (data && data.roomId) io.to(data.roomId).emit('receiveChatMessage', { username: data.username, text: data.text }); 
+    });
+
+    socket.on('findGame', (data) => { 
+        if (!data || !data.username) return;
+        matchmakingQueue = matchmakingQueue.filter(p => p.username !== data.username); 
+        matchmakingQueue.push({ socketId: socket.id, username: data.username, deck: data.deck }); 
+        if (matchmakingQueue.length >= 2) pornesteMeciul(matchmakingQueue.shift(), matchmakingQueue.shift()); 
+    });
+
+    socket.on('cancelFindGame', (data) => { 
+        if (data && data.username) matchmakingQueue = matchmakingQueue.filter(p => p.username !== data.username); 
+    });
+
+    socket.on('playerSurrender', (data) => { 
+        if (!data || !data.roomId) return;
+        let r = activeRooms[data.roomId]; 
+        if (r) { 
+            io.to(data.roomId).emit('matchOverBySurrender', { abandonedRole: data.role }); 
+            if (typeof adaugaVictorie === 'function') adaugaVictorie(data.role === 1 ? r.p2User : r.p1User); 
+            delete activeRooms[data.roomId]; 
+        } 
+    });
+
+    socket.on('matchFinishedNormal', (data) => { 
+        if (!data || !data.roomId) return;
+        let r = activeRooms[data.roomId]; 
+        if (r) { 
+            io.to(data.roomId).emit('matchOverByPoints', { winnerUsername: data.winnerUsername, reason: data.reason }); 
+            if (typeof adaugaVictorie === 'function') adaugaVictorie(data.winnerUsername); 
+            delete activeRooms[data.roomId]; 
+        } 
+    });
+
     socket.on('disconnect', () => {
         matchmakingQueue = matchmakingQueue.filter(p => p.socketId !== socket.id);
         for (let id in activeRooms) {
-            let r = activeRooms[id]; if (r.p1SocketId === socket.id || r.p2SocketId === socket.id) {
-                let ab = r.p1SocketId === socket.id ? 1 : 2; let abU = ab === 1 ? r.p1User : r.p2User; let winU = ab === 1 ? r.p2User : r.p1User; io.to(id).emit('playerDisconnectedWaiting', { username: abU, seconds: 15 });
-                disconnectTimeouts[abU] = setTimeout(() => { if (activeRooms[id]) { io.to(id).emit('matchOverBySurrender', { abandonedRole: ab, reason: "timeout_15s" }); adaugaVictorie(winU); delete activeRooms[id]; } delete disconnectTimeouts[abU]; }, 15000); break;
+            let r = activeRooms[id]; 
+            if (r.p1SocketId === socket.id || r.p2SocketId === socket.id) {
+                let ab = r.p1SocketId === socket.id ? 1 : 2; 
+                let abU = ab === 1 ? r.p1User : r.p2User; 
+                let winU = ab === 1 ? r.p2User : r.p1User; 
+                io.to(id).emit('playerDisconnectedWaiting', { username: abU, seconds: 15 });
+                
+                disconnectTimeouts[abU] = setTimeout(() => { 
+                    if (activeRooms[id]) { 
+                        io.to(id).emit('matchOverBySurrender', { abandonedRole: ab, reason: "timeout_15s" }); 
+                        if (typeof adaugaVictorie === 'function') adaugaVictorie(winU); 
+                        delete activeRooms[id]; 
+                    } 
+                    delete disconnectTimeouts[abU]; 
+                }, 15000); 
+                break;
             }
         }
     });
 });
+
 const PORT = process.env.PORT || 8080; http.listen(PORT, '0.0.0.0', () => { console.log(`Server activ pe portul ${PORT}`); });
