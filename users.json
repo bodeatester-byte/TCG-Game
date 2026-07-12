@@ -1,0 +1,90 @@
+[
+  {
+    "username": "bodea",
+    "password": "123123"
+  },
+  {
+    "username": "bodea2",
+    "password": "123123",
+    "wins": 48,
+    "coins": 9200,
+    "unlockedPacks": [
+      "golem",
+      "undead",
+      "spirit",
+      "mecha"
+    ]
+  },
+  {
+    "username": "bodea1",
+    "password": "123113"
+  },
+  {
+    "username": "bodea3",
+    "password": "123123",
+    "wins": 49,
+    "coins": 1,
+    "unlockedPacks": [
+      "dragon",
+      ""
+    ]
+  },
+  {
+    "username": "Bogdan3",
+    "password": "123123"
+  },
+  {
+    "username": "Bogdan4",
+    "password": "123123"
+  },
+  {
+    "username": "asav14",
+    "password": "lovebodea"
+  },
+  {
+    "username": "Bodea4",
+    "password": "123123",
+    "wins": 7
+  },
+  {
+    "username": "bodea5",
+    "password": "123123",
+    "wins": 0
+  },
+  {
+    "username": "Bogdan6",
+    "password": "123123",
+    "wins": 0
+  },
+  {
+    "username": "Muntenas",
+    "password": "123123",
+    "wins": 0
+  },
+  {
+    "username": "bodea333",
+    "password": "123123",
+    "wins": 0
+  },
+  {
+    "username": "francoi",
+    "password": "123123",
+    "wins": 0,
+    "losses": 0,
+    "coins": 100
+  },
+  {
+    "username": "francoi2",
+    "password": "123123",
+    "wins": 0,
+    "losses": 0,
+    "coins": 100
+  },
+  {
+    "username": "francoi3",
+    "password": "123123",
+    "wins": 0,
+    "losses": 0,
+    "coins": 100
+  }
+]
